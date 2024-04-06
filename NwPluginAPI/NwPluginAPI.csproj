@@ -57,12 +57,32 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Reference Include="Assembly-CSharp" HintPath="$(SL_REFERENCES)\Assembly-CSharp.dll" />
-		<Reference Include="CommandSystem.Core" HintPath="$(SL_REFERENCES)\CommandSystem.Core.dll" />
-		<Reference Include="Mirror" HintPath="$(SL_REFERENCES)\Mirror.dll" />
-		<Reference Include="NorthwoodLib" HintPath="$(SL_REFERENCES)\NorthwoodLib.dll" />
-		<Reference Include="Pooling" HintPath="$(SL_REFERENCES)\Pooling.dll" />
-		<Reference Include="UnityEngine.CoreModule" HintPath="$(UNITY_REFERENCES)\UnityEngine.CoreModule.dll" />
-	    <Reference Include="UnityEngine.PhysicsModule" HintPath="$(UNITY_REFERENCES)\UnityEngine.PhysicsModule.dll" />
+	  <Reference Include="Assembly-CSharp">
+	    <HintPath>..\..\SL Plugins\References\Assembly-CSharp.dll</HintPath>
+	  </Reference>
+	  <Reference Include="CommandSystem.Core">
+	    <HintPath>..\..\SL Plugins\References\CommandSystem.Core.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Mirror">
+	    <HintPath>..\..\SL Plugins\References\Mirror.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Mirror.Components">
+	    <HintPath>..\..\SL Plugins\References\Mirror.Components.dll</HintPath>
+	  </Reference>
+	  <Reference Include="NorthwoodLib">
+	    <HintPath>..\..\SL Plugins\References\NorthwoodLib.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Pooling">
+	    <HintPath>..\..\SL Plugins\References\Pooling.dll</HintPath>
+	  </Reference>
+	  <Reference Include="UnityEngine">
+	    <HintPath>..\..\SL Plugins\References\UnityEngine.dll</HintPath>
+	  </Reference>
+	  <Reference Include="UnityEngine.CoreModule">
+	    <HintPath>..\..\SL Plugins\References\UnityEngine.CoreModule.dll</HintPath>
+	  </Reference>
+	  <Reference Include="UnityEngine.PhysicsModule">
+	    <HintPath>..\..\SL Plugins\References\UnityEngine.PhysicsModule.dll</HintPath>
+	  </Reference>
 	</ItemGroup>
 </Project>

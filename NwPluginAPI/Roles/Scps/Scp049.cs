@@ -1,6 +1,6 @@
 using PlayerRoles.PlayableScps.Scp049;
 using PluginAPI.Core;
-using static PlayerRoles.PlayableScps.Scp049.Scp049AudioPlayer;
+using static PlayerRoles.PlayableScps.Scp049.Zombies.ZombieAudioPlayer;
 
 namespace PluginAPI.Roles
 {
@@ -28,8 +28,6 @@ namespace PluginAPI.Roles
 			RoleBase = role;
 			RoleBase.SubroutineModule.TryGetSubroutine(out SenseAbility);
 		}
-
-		public virtual bool ReceiveSound(ref SoundType type) => true;
 
 		public virtual bool CallZombies(ref float duration) => true;
 

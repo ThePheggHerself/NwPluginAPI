@@ -295,6 +295,15 @@ namespace PluginAPI.Events
 		// ReSharper disable once MemberCanBePrivate.Global
 		public static T ExecuteEvent<T>(IEventArguments args) where T : struct
 		{
+			if(args is ISubscriptionEvent iSE)
+			{
+				iSE.invoke();
+
+				return (T)(object)iSE.IsCancelled;
+
+
+			}
+
 			if (!Events.TryGetValue(args.BaseType, out Event ev))
 			{
 				Log.Error($"Event &6{args.BaseType}&r is not registered in manager! ( create issue on github )");

@@ -1,4 +1,5 @@
 using PluginAPI.Enums;
+using System;
 
 namespace PluginAPI.Events
 {
