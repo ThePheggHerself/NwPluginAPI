@@ -29,11 +29,8 @@ namespace PluginAPI.Core
 		private readonly PluginEntryPoint _entryInfo;
 		private string _pluginVersion;
 
-		private readonly MethodInfo _entryPoint;
-		private readonly MethodInfo _onUnload;
-
 		private readonly object _plugin;
-		private readonly Type _pluginType;
+		private readonly PluginBase _pluginType;
 
 		/// <summary>
 		/// Gets plugin handler.
@@ -59,7 +56,7 @@ namespace PluginAPI.Core
 		/// <summary>
 		/// Gets the name of the plugin.
 		/// </summary>
-		public string PluginName => _entryInfo?.Name ?? _pluginType.FullName;
+		public string PluginName => _entryInfo?.Name ?? _pluginType.GetType().FullName;
 
 		/// <summary>
 		/// Gets the version of the plugin.
@@ -119,15 +116,9 @@ namespace PluginAPI.Core
 		/// </summary>
 		public void Unload()
 		{
-			if (_onUnload == null)
-			{
-				Log.Warning($"Plugin &2{PluginName}&r has missing unload method!");
-				return;
-			}
-
 			try
 			{
-				_onUnload.Invoke(_plugin, null);
+				_pluginType.OnDisable();
 			}
 			catch (Exception ex)
 			{
@@ -140,15 +131,9 @@ namespace PluginAPI.Core
 		/// </summary>
 		public void Load()
 		{
-			if (_entryPoint == null)
-			{
-				Log.Error($"Failed loading plugin &2{PluginName}&r, invalid entrypoint!");
-				return;
-			}
-
 			try
 			{
-				_entryPoint.Invoke(_plugin, null);
+				_pluginType.OnEnable();
 			}
 			catch (Exception ex)
 			{
@@ -300,36 +285,10 @@ namespace PluginAPI.Core
 		/// <param name="plugin">The plugin object.</param>
 		/// <param name="pluginType">The type of plugin.</param>
 		/// <param name="types">The all types in plugin.</param>
-		public PluginHandler(PluginDirectory directory, object plugin, Type pluginType, Type[] types)
+		public PluginHandler(PluginDirectory directory, object plugin, PluginBase pluginType, Type[] types)
 		{
 			_plugin = plugin;
 			_pluginType = pluginType;
-
-			foreach (var method in _pluginType.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
-			{
-				foreach (var attribute in method.GetCustomAttributes<Attribute>())
-				{
-					switch (attribute)
-					{
-						case PluginPriority priority:
-							LoadPriority = priority.Priority;
-							break;
-						case PluginEntryPoint pluginEntryPoint:
-							_entryPoint = method;
-							_entryInfo = pluginEntryPoint;
-							break;
-						case PluginUnload _:
-							_onUnload = method;
-							break;
-					}
-				}
-			}
-
-			if (_entryInfo == null)
-			{
-				Log.Error($"Missing entrypoint for plugin &2{PluginName}&r!");
-				return;
-			}
 
 			_pluginDirectory = Path.Combine(directory.Plugins, PluginName);
 			_mainConfigPath = Path.Combine(_pluginDirectory, "config.yml");
@@ -354,18 +313,8 @@ namespace PluginAPI.Core
 				Log.Debug($"Created missing plugin directory for \"&2{PluginName}&r\".", Log.DebugMode);
 			}
 
-			foreach (var field in _pluginType.GetFields())
-			{
-				foreach (var attribute in field.GetCustomAttributes<Attribute>())
-				{
-					switch (attribute)
-					{
-						case PluginConfig _:
-							LoadConfig(_plugin, field.Name);
-							break;
-					}
-				}
-			}
+			if(pluginType.Config != null)
+				LoadConfig(_plugin, pluginType.Config.ToString());
 		}
 	}
 }

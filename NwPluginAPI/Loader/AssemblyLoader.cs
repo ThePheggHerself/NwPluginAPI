@@ -148,41 +148,30 @@ namespace PluginAPI.Loader
 					continue;
 				}
 
-				foreach (var entryType in types)
+				var entryTypes = types.Where(t => t.IsSubclassOf(typeof(PluginBase)) && t != typeof(PluginBase));
+
+				if (entryTypes.Any())
 				{
-					try
-					{
-						if (!entryType.IsValidEntrypoint()) continue;
-					}
-					catch (Exception ex)
-					{
-						Log.Error($"Failed checking entrypoint for plugin &2{Path.GetFileNameWithoutExtension(pluginPath)}&r.\n{ex}");
-						continue;
-					}
+					var type = entryTypes.First();
+					PluginBase plugin = (PluginBase)Activator.CreateInstance(type);
 
 					if (!Plugins.ContainsKey(assembly)) Plugins.Add(assembly, new Dictionary<Type, PluginHandler>());
 
-					if (!Plugins[assembly].ContainsKey(entryType))
+					if (!Plugins[assembly].ContainsKey(type))
 					{
-						object plugin = null;
-						try
-						{
-							plugin = Activator.CreateInstance(entryType);
-						}
-						catch (Exception ex)
-						{
-							Log.Error($"Failed creating instance of plugin &2{Path.GetFileNameWithoutExtension(pluginPath)}&r.\n{ex}", "Loader");
-							continue;
-						}
-
 						PluginToAssembly.Add(plugin, assembly);
 
-						Plugins[assembly].Add(entryType, new PluginHandler(directory, plugin, entryType, types)
+						Plugins[assembly].Add(type, new PluginHandler(directory, plugin, plugin, types)
 						{
 							PluginFilePath = pluginPath
 						});
 						successes++;
 					}
+				}
+				else
+				{
+					Log.Error($"Failed checking entrypoint for plugin &2{Path.GetFileNameWithoutExtension(pluginPath)}&r.");
+					continue;
 				}
 			}
 
